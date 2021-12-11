@@ -1,3 +1,5 @@
+from algorithms import dijkstras_searching
+
 class Vertex:
     def __init__(self, id, name, display_name, total_lines, rail):
         # Adding details of station to and as vertex.
@@ -15,13 +17,35 @@ class Vertex:
         self.adjacent[neighbour] = weight
 
     def getConnections(self):
-        return self.adjacent
+        edges = self.adjacent
+        connections = []
+        for edge in edges:
+            connections.append(
+                edge.get_connection(self)
+            )
+        return connections
 
     def getId(self):
         return self.id
 
     # def getWeight(self, neighbour):
     #     return self.adjacent
+
+class Train:
+    trains = {}
+
+    def __init__(self, id, name, colour, stripe):
+        self.name = name
+        self.id = id
+        self.colour = colour
+        self.stripe = stripe
+
+        Train.trains.update({
+            id: self
+        })
+
+    def get_train(id):
+        return Train.trains[id]
 
 
 class Edge:
@@ -39,14 +63,21 @@ class Edge:
         # if not value:
         self.id = len(self.edges)
         self.graph = graph
-        self.train_id = train_id
-        self.duration = duration
+        self.train = Train.get_train(train_id)
+        self.duration = int(duration)
         self.vertices = vertices
         if self not in vertices[0].adjacent:
             vertices[0].adjacent.append(self)
         if self not in vertices[1].adjacent:
             vertices[1].adjacent.append(self)
         self.edges.append(self)
+
+    def get_connection(self, vertex):
+        if vertex == self.vertices[0]:
+            neighbour = self.vertices[1]
+        else:
+            neighbour = self.vertices[0]
+        return int(self.duration), neighbour.id
 
     def __str__(self):
         return 'edge'
@@ -97,3 +128,8 @@ class Graph:
                         duration=duration,
                         vertices=vertices)
         return edge
+
+    def search_dijistras(self, start, destination):
+        start = self.vertDict[start]
+        destination = self.vertDict[destination]
+        dijkstras_searching(self, start, destination)

@@ -1,5 +1,5 @@
 import csv
-from graph_class import Graph, Vertex
+from graph_class import Graph, Vertex, Train
 
 # CSV library used to parse csv files
 
@@ -38,11 +38,10 @@ with open(london_lines_file, newline='') as csvfile:
         # print(row)
         # name_id = row[0].split(',')
         # creating a dictionary reference for train info
-        train_lines.update({row[0]: {
-            'name': row[1],
-            'color': row[2],
-            'stripe': row[3]
-        }})
+        train = Train(id=row[0],
+                      name=row[1],
+                      colour=row[2],
+                      stripe=row[3])
 # print(train_lines)
 
 # checking uniqueness
@@ -72,3 +71,6 @@ with open(london_connections_file, newline='') as csvfile:
         # print(row)
     # print(duplicate_connections)
     rail_graph.print_graph()
+    start_station = str(input("enter start id: "))
+    destination_station = str(input("enter end id: "))
+    rail_graph.search_dijistras(start_station, destination_station)

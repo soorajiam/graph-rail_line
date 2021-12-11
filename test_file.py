@@ -15,7 +15,7 @@ with open(london_stations_file, newline='') as csvfile:
     for row in spam_reader:
         print(row)
 #         row = row[0].split(',')
-        rail_network.add_node(row[0], title=row[3])
+        rail_network.add_node(row[0], title=row[0])
 
 # 
 train_lines = {}
