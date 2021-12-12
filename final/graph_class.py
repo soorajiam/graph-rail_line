@@ -1,4 +1,5 @@
-from algorithms import dijkstras_searching
+from algorithms import dijkstras_searching, dijistras_short
+import json
 
 class Vertex:
     def __init__(self, id, name, display_name, total_lines, rail):
@@ -51,9 +52,9 @@ class Train:
 class Edge:
     edges = []
 
-    def check_duplicate(verices):
+    def check_duplicate(vertices):
         for edge in Edge.edges:
-            if verices == edge.vertices or verices[::-1] == edge.vertices:
+            if vertices == edge.vertices or vertices[::-1] == edge.vertices:
                 return edge
             else:
                 return False
@@ -133,3 +134,37 @@ class Graph:
         start = self.vertDict[start]
         destination = self.vertDict[destination]
         dijkstras_searching(self, start, destination)
+
+    def build_short_matrix(self):
+        short_paths = {}
+        for vertex in self.getVertices():
+            distances, parents = dijistras_short(self, self.vertDict[vertex])
+            short_paths[vertex] = {
+                'distances': distances,
+                'parents': parents
+            }
+        with open('data.json', 'w') as fp:
+            json.dump(short_paths, fp)
+        fp.close()
+
+    def search_after_map_build(self, start, destination):
+
+        with open('data.json', 'r') as f:
+            paths = json.load(f)
+
+        f.close()
+        path_searched = paths[start]
+        print(f'distance: {path_searched["distances"][destination]}')
+        path1 = self.build_path(start, destination, path_searched['parents'])
+        print(path1)
+        print(path1.pop())
+
+    def build_path(self, start, destination, parents):
+        current_vertex = destination
+        path = []
+        while start != current_vertex:
+            path.append(current_vertex)
+            current_vertex = parents[current_vertex]
+        path.append(start)
+        return path
+        # print(short_paths)

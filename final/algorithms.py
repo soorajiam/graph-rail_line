@@ -9,8 +9,7 @@ def dijkstras_searching(graph, start, destination):
     print(f'Starts at : {start}')
     print(f'Destination: {destination}')
 
-    distances, parents = dijistras(graph, start)
-
+    distances, parents = dijistras_short(graph, start)
 
     print(distances)
     print(parents)
@@ -19,7 +18,7 @@ def dijkstras_searching(graph, start, destination):
     print(parents[start.id])
     print(distances[start.id])
     flag = 1
-    while(flag):
+    while (flag):
         start = input("start: ")
         end = input("end: ")
         print(parents[start])
@@ -29,7 +28,8 @@ def dijkstras_searching(graph, start, destination):
         flag = int(input("continue:(0/1)"))
     # print(distance)
 
-def dijistras(graph, start, destination=None):
+
+def dijistras_short(graph, start, destination=None):
     distances = {vertex: float('inf') for vertex in graph.getVertices()}
     distances[start.id] = 0
     parents = {vertex: None for vertex in graph.getVertices()}
@@ -44,6 +44,3 @@ def dijistras(graph, start, destination=None):
                 parents[next_node] = current_node
                 heapq.heappush(queue, (distance_temp, next_node))
     return distances, parents
-
-
-
