@@ -9,7 +9,8 @@ class Vertex:
         self.display_name = display_name
         self.total_lines = total_lines
         self.rail = rail
-        self.adjacent = []  # Adjacency list
+        self.adjacent = []  
+        self.is_active = True
 
     def __str__(self):
         return str(self.name)
@@ -21,9 +22,9 @@ class Vertex:
         edges = self.adjacent
         connections = []
         for edge in edges:
-            connections.append(
-                edge.get_connection(self)
-            )
+            edge = edge.get_connection(self)
+            if edge:
+                connections.append(edge)
         return connections
 
     def getId(self):
@@ -40,6 +41,7 @@ class Train:
         self.id = id
         self.colour = colour
         self.stripe = stripe
+        self.is_active = False
 
         Train.trains.update({
             id: self
@@ -47,6 +49,18 @@ class Train:
 
     def get_train(id):
         return Train.trains[id]
+
+    def get_object_from_name(name):
+        for train_id in Train.trains.keys():
+            if name == Train.trains[train_id].name:
+                return Train.trains[train_id]
+        return None
+
+    def toggle_status(self):
+        self.is_active = not self.is_active
+        print(f'Train status is now {self.is_active}')
+        
+
 
 
 class Edge:
@@ -74,11 +88,14 @@ class Edge:
         self.edges.append(self)
 
     def get_connection(self, vertex):
-        if vertex == self.vertices[0]:
-            neighbour = self.vertices[1]
+        if self.train.is_active:
+            if vertex == self.vertices[0]:
+                neighbour = self.vertices[1]
+            else:
+                neighbour = self.vertices[0]
+            return int(self.duration), neighbour.id
         else:
-            neighbour = self.vertices[0]
-        return int(self.duration), neighbour.id
+            return None
 
     def __str__(self):
         return 'edge'
@@ -98,6 +115,7 @@ class Graph:
         self.vertDict[vertex.id] = vertex
         return vertex
 
+
     def getVertex(self, n):
         if n in self.vertDict:
             return self.vertDict[n]
@@ -115,8 +133,7 @@ class Graph:
         return self.vertDict.keys()
 
     def addEdge(self, vertex_1, vertex_2, train_id, duration=0):
-        # print(self.vertDict[vertex_1],
-        # self.vertDict[vertex_2])
+
         # since undirected graph, nodes sahll share the same values in both ways
         # creating edge object to better manage
         vertices = [self.vertDict[vertex_1],
@@ -130,10 +147,24 @@ class Graph:
                         vertices=vertices)
         return edge
 
+    def get_named_dict_of_vertices(self):
+        named_dict = {self.vertDict[v].name: self.vertDict[v] for v in self.getVertices()}
+        return named_dict
+
     def search_dijistras(self, start, destination):
-        start = self.vertDict[start]
-        destination = self.vertDict[destination]
-        dijkstras_searching(self, start, destination)
+        start_vertex = self.vertDict[start]
+        destination_vertex = self.vertDict[destination]
+        distances, parents = dijkstras_searching(self, start_vertex, destination_vertex)
+        distance = distances[destination]
+        if distance == float("inf"):
+            print("Path does not exist")
+            path = []
+            distance = "Infinity"
+        # print("TESSST",parents)
+        else:
+            path = self.build_path(start, destination, parents)
+            print(path)
+        return distance, path
 
     def build_short_matrix(self):
         short_paths = {}
@@ -154,10 +185,16 @@ class Graph:
 
         f.close()
         path_searched = paths[start]
-        print(f'distance: {path_searched["distances"][destination]}')
-        path1 = self.build_path(start, destination, path_searched['parents'])
-        print(path1)
-        print(path1.pop())
+        distance = path_searched["distances"][destination]
+        print(f'distance: {distance}')
+        if distance == float("inf"):
+            print("Path does not exist")
+            path = []
+            distance = "Infinity"
+        else:
+            path = self.build_path(start, destination, path_searched['parents'])
+            print(path)
+        return distance, path 
 
     def build_path(self, start, destination, parents):
         current_vertex = destination
