@@ -39,7 +39,6 @@ def dijistras_short(graph, start, destination=None):
     return distances, parents
 
 
-
 def dfs(graph, node):
     visited = [node]
     stack = [node]
@@ -59,19 +58,20 @@ def dfs(graph, node):
 
 
 def get_chain_d(argDict):
-    def each_path(i,caller_chain):
-        a=[]
+    def each_path(i, caller_chain):
+        a = []
         caller_chain.append(i)
-        b = argDict.get(i,[])
+        b = argDict.get(i, [])
         for j in b:
             if j not in caller_chain:
                 a.append(j)
-                a.extend(each_path(j,caller_chain))
+                a.extend(each_path(j, caller_chain))
         return a
 
-    return {i:each_path(i,[]) for i in argDict}
+    return {i: each_path(i, []) for i in argDict}
 
-dependecyDict = { 'A': ['D'], 'B': ['A', 'E'], 'C': ['B'], 'D': ['C'], 'G':['H']}
+
+dependecyDict = {'A': ['D'], 'B': ['A', 'E'], 'C': ['B'], 'D': ['C'], 'G': ['H']}
 
 print(get_chain_d(dependecyDict))
 
@@ -88,8 +88,9 @@ def paths(graph, v):
     [[3, 1, 2, 4]]
 
     """
-    path = [v]                  # path traversed so far
-    seen = {v}                  # set of vertices in path
+    path = [v]  # path traversed so far
+    seen = {v}  # set of vertices in path
+
     def search():
         dead_end = True
         for neighbour in graph[path[-1]]:
@@ -102,5 +103,5 @@ def paths(graph, v):
                 seen.remove(neighbour)
         if dead_end:
             yield list(path)
-    yield from search()
 
+    yield from search()

@@ -30,6 +30,10 @@ class Vertex:
     def getId(self):
         return self.id
 
+    def toggle_status(self):
+        self.is_active = not self.is_active
+        print(f'Station status is now {self.is_active}')
+
     # def getWeight(self, neighbour):
     #     return self.adjacent
 
@@ -41,7 +45,7 @@ class Train:
         self.id = id
         self.colour = colour
         self.stripe = stripe
-        self.is_active = False
+        self.is_active = True
 
         Train.trains.update({
             id: self
