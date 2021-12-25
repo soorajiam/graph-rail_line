@@ -17,7 +17,7 @@ def search_network():
             str(start_vertex.id),
             str(destination_vertex.id))
     else:
-        distance, path = current_graph.search_dijistras(
+        distance, path = current_graph.search_graph(
             str(start_vertex.id),
             str(destination_vertex.id))
     shortest_path_duration_text = f'shortest duration : {distance} '
